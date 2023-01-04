@@ -16,6 +16,7 @@ class _FateDicesState extends State<FateDices> {
   ValueNotifier<String> dice3 = ValueNotifier<String>('');
   ValueNotifier<String> dice4 = ValueNotifier<String>('');
   ValueNotifier<String> pontuation = ValueNotifier<String>('');
+  ValueNotifier<List> historic = ValueNotifier<List>([]);
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,33 @@ class _FateDicesState extends State<FateDices> {
     }
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              context: context,
+              builder: (BuildContext context) {
+                return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.separated(
+                        itemBuilder: (context, index) => const Divider(),
+                        separatorBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(
+                              historic.value[index],
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          );
+                        },
+                        itemCount: historic.value.length));
+              });
+        },
+        child: const Icon(Icons.history),
+      ),
       appBar: AppBar(
         title: const Text('Dados Fate'),
         centerTitle: true,
@@ -79,6 +107,8 @@ class _FateDicesState extends State<FateDices> {
                 } else if (diceSum == 4) {
                   pontuation.value = 'Excepcional: $diceSum';
                 }
+                historic.value.add(
+                    '${dice1.value} ${dice2.value} ${dice3.value} ${dice4.value} = $diceSum');
               });
             },
             child: Row(
@@ -114,7 +144,7 @@ class _FateDicesState extends State<FateDices> {
             padding: const EdgeInsets.only(top: 15),
             child: Text(
               pontuation.value,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           )
         ],
